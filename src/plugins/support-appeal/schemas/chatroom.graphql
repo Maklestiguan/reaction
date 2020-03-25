@@ -201,8 +201,8 @@ extend type Query {
   ): Chatroom
 
   "Returns chatrooms optionally filtered by status"
-  accounts(
-    "Return only accounts in any of these groups"
+  chatrooms(
+    "Return only chatrooms in any of these groups"
     groupStatuses: [ChatroomStatus],
 
     "Return only results that come after this cursor. Use this with `first` to specify the number of results to return."
