@@ -1,0 +1,232 @@
+"""
+Possible current status of the chatroom.
+Also you are allowed to sort any query that returns an `ChatroomConnection` by these values.
+"""
+enum ChatroomStatus {
+  OPENED
+  CLOSED
+  REOPENED
+}
+
+"Represents a single chatroom instance"
+type Chatroom implements Node {
+  "The ID of the chatroom"
+  chatroomId: ID!
+
+  """
+  The ID of the shop the chatroom belongs to
+  NOTE:
+    You (most probably) don't need this when using reactioncommerce for a single shop development.
+  """
+  shopId: ID!
+
+  "The ID of the user that started the chatroom"
+  userId: ID!
+
+  """
+  The IDs of all users that were involved in chat.
+  NOTE:
+    It is possible that one of the support team employees will not be able to solve client's issue.
+    Thus it is good for them to be able to switch.
+    This field allows 2 and more people being involved: 1 client and 1+ support team employees.
+  """
+  users: [ID!]!
+
+  "Name of the user that started the chatroom"
+  name: String
+
+  """
+  Username to be shown in braces `name(username)`.
+  NOTE:
+    It might be insecure to show real `username` used for logging in.
+    `username` might and should be hashed (no salt) in actual project's database.
+    Make sure it's appropriate to show `username` to a support team employees.
+  """
+  username: String!
+
+  "Email of the user for further contact"
+  email: Email!
+
+  "The timestamp of a chatroom creation"
+  createdAt: DateTime!
+
+  "A list of messages related to the chatroom"
+  messages: [Message!]
+
+  "Current status of the chatroom"
+  status: ChatroomStatus!
+}
+
+"Represents a single message instance"
+type Message {
+  "Message unique id"
+  id: ID!
+
+  "Text of the message"
+  text: String!
+
+  """
+  An author of the message
+  NOTE:
+    This might be either Account's `_id` or user's `ID`.
+    Choice is `probably` made upon architecture difference from shop to shop.
+  """
+  createdBy: ID!
+
+  "Time of the message being sent"
+  createdAt: String!
+}
+
+"Defines the chatroom which should be created"
+input CreateChatroomInput {
+  "The ID of the chatroom"
+  chatroomId: ID!
+
+  "The ID of the shop the chatroom belongs to"
+  shopId: ID!
+
+  "The ID of the user that started the chatroom"
+  userId: ID!
+
+  "Name of the user that started the chatroom"
+  name: String
+
+  "Username to be shown in braces `name(username)`"
+  username: String!
+
+  "Email of the user"
+  email: Email!
+
+  "The timestamp of a chatroom creation"
+  createdAt: DateTime!
+}
+
+"Allows changing chatroom status to CLOSED or REOPENED by either user or support team employee"
+input UpdateChatroomStatusInput {
+  "The chatroom ID, which defaults to the chatroom opened by viewer"
+  chatroomId: ID
+
+  "Status to be set"
+  status: ChatroomStatus!
+
+  """
+  Reason that explains status change (for support team employees).
+  NOTE:
+    You can also implement additional functionality for users to set reason too.
+  """
+  reason: String
+
+  "An optional string identifying the mutation call, which will be returned in the response payload"
+  clientMutationId: String
+}
+
+"The response from the `createChatroom` mutation"
+type CreateChatroomPayload {
+  "The started chatroom"
+  chatroom: Chatroom
+
+  "The same string you sent with the mutation params, for matching mutation calls with their responses"
+  clientMutationId: String
+}
+
+"The response from the `ChangeChatroomStatus` mutation"
+type UpdateChatroomStatusPayload {
+  "The changed chatroom"
+  chatroom: Chatroom
+
+  """
+  Reason that explains status change (for support team employees).
+  NOTE:
+    You can also implement additional functionality for users to set reason too.
+  """
+  reason: String
+
+  "The same string you sent with the mutation params, for matching mutation calls with their responses"
+  clientMutationId: String
+}
+
+"""
+Wraps a list of `Chatrooms`, providing pagination cursors and information.
+
+For information about what Relay-compatible connections are and how to use them, see the following articles:
+- [Relay Connection Documentation](https://facebook.github.io/relay/docs/en/graphql-server-specification.html#connections)
+- [Relay Connection Specification](https://facebook.github.io/relay/graphql/connections.htm)
+- [Using Relay-style Connections With Apollo Client](https://www.apollographql.com/docs/react/recipes/pagination.html)
+"""
+type ChatroomConnection {
+  "The list of nodes that match the query, wrapped in an edge to provide a cursor string for each"
+  edges: [ChatroomEdge]
+
+  """
+  You can request the `nodes` directly to avoid the extra wrapping that `NodeEdge` has,
+  if you know you will not need to paginate the results.
+  """
+  nodes: [Chatroom]
+
+  "Information to help a client request the next or previous page"
+  pageInfo: PageInfo!
+
+  "The total number of nodes that match your query"
+  totalCount: Int!
+}
+
+"A connection edge in which each node is a `Chatroom` object"
+type ChatroomEdge implements NodeEdge {
+  "The cursor that represents this node in the paginated results"
+  cursor: ConnectionCursor!
+
+  "The chatroom"
+  node: Chatroom
+}
+
+extend type Mutation {
+  "Create a chatroom"
+  createChatroom(
+    "Mutation input"
+    input: CreateChatroomInput!
+  ): CreateChatroomPayload
+
+  "Update chatroom status"
+  updateChatroom(
+    "Mutation input"
+    input: UpdateChatroomStatusInput!
+  ): UpdateChatroomStatusPayload  
+}
+
+extend type Query {
+  "Returns the chatroom with the provided ID"
+  chatroom(
+    "The chatroom ID"
+    id: ID!
+  ): Chatroom
+
+  "Returns chatrooms optionally filtered by status"
+  accounts(
+    "Return only accounts in any of these groups"
+    groupStatuses: [ChatroomStatus],
+
+    "Return only results that come after this cursor. Use this with `first` to specify the number of results to return."
+    after: ConnectionCursor,
+
+    "Return only results that come before this cursor. Use this with `last` to specify the number of results to return."
+    before: ConnectionCursor,
+
+    "Return at most this many results. This parameter may be used with either `after` or `offset` parameters."
+    first: ConnectionLimitInt,
+
+    "Return at most this many results. This parameter may be used with the `before` parameter."
+    last: ConnectionLimitInt,
+
+    "Return only results that come after the Nth result. This parameter may be used with the `first` parameter."
+    offset: Int,
+
+    "Return results sorted in this order"
+    sortOrder: SortOrder = asc,
+
+    "By default, groups are sorted by when they were created, oldest first. Set this to sort by one of the other allowed fields"
+    sortBy: ChatroomSortByField = createdAt
+  ): ChatroomConnection!
+
+  "Returns the chatroom for the authenticated user"
+  viewer: Chatroom
+}
