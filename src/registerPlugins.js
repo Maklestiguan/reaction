@@ -19,6 +19,7 @@ import registerShippingPlugin from "./core-services/shipping/index.js";
 import registerShopPlugin from "./core-services/shop/index.js";
 import registerTagsPlugin from "./core-services/tags/index.js";
 import registerTaxesPlugin from "./core-services/taxes/index.js";
+import registerChatroomPlugin from "./core-services/chatroom/index.js";
 
 /* plugins */
 import registerAuthenticationPlugin from "./plugins/authentication/index.js";
@@ -75,6 +76,9 @@ export default async function registerPlugins(app) {
   await registerAddressPlugin(app); // REQUIRED
   await registerTranslationsPlugin(app); // OPTIONAL
   await registerSystemInfoPlugin(app); // OPTIONAL
+
+  // Testing chatroom registration
+  await registerChatroomPlugin(app); // OPTIONAL
 
   /**
    * Email

@@ -17,7 +17,7 @@ export default async function register(app) {
     name: "reaction-chatroom",
     version: app.context.appVersion,
     collections: {
-      Shops: {
+      Chatrooms: {
         name: "Chatrooms",
         // indexes: [
           // Create indexes. We set specific names for backwards compatibility
