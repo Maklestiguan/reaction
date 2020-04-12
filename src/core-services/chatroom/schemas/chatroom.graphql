@@ -11,50 +11,22 @@ enum ChatroomStatus {
 "Represents a single chatroom instance"
 type Chatroom implements Node {
   "The ID of the chatroom"
-  chatroomId: ID!
-
-  """
-  The ID of the shop the chatroom belongs to
-  NOTE:
-    You (most probably) don't need this when using reactioncommerce for a single shop development.
-  """
-  shopId: ID!
-
-  "The ID of the user that started the chatroom"
-  userId: ID!
-
-  """
-  The IDs of all users that were involved in chat.
-  NOTE:
-    It is possible that one of the support team employees will not be able to solve client's issue.
-    Thus it is good for them to be able to switch.
-    This field allows 2 and more people being involved: 1 client and 1+ support team employees.
-  """
-  users: [ID!]!
-
-  "Name of the user that started the chatroom"
-  name: String
-
-  """
-  Username to be shown in braces `name(username)`.
-  NOTE:
-    It might be insecure to show real `username` used for logging in.
-    `username` might and should be hashed (no salt) in actual project's database.
-    Make sure it's appropriate to show `username` to a support team employees.
-  """
-  username: String!
-
-  "Email of the user for further contact"
-  email: Email!
-
-  "The timestamp of a chatroom creation"
-  createdAt: DateTime!
-
-  "A list of messages related to the chatroom"
-  messages: [Message!]
+  _id: ID
 
   "Current status of the chatroom"
   status: ChatroomStatus!
+
+  "The ID of the user that started the chatroom"
+  createdBy: Account!
+
+  "All messages related to this chatroom"
+  messages: [Message]!
+
+  "Chatroom creation timestamp"
+  createdAt: DateTime!
+
+  "Last chatroom status update time"
+  lastUpdatedAt: DateTime!
 }
 
 "Represents a single message instance"
@@ -64,48 +36,25 @@ type Message {
 
   "Text of the message"
   text: String!
+  
+  "An author of the message"
+  createdBy: Account!
 
-  """
-  An author of the message
-  NOTE:
-    This might be either Account's `_id` or user's `ID`.
-    Choice is `probably` made upon architecture difference from shop to shop.
-  """
-  createdBy: ID!
-
-  "Time of the message being sent"
-  createdAt: String!
+  "Message creation time"
+  createdAt: DateTime!
 }
 
 "Defines the chatroom which should be created"
 input CreateChatroomInput {
-  "The ID of the chatroom"
-  chatroomId: ID!
-
-  "The ID of the shop the chatroom belongs to"
-  shopId: ID!
-
   "The ID of the user that started the chatroom"
-  userId: ID!
+  createdBy: Account!
 
-  "Name of the user that started the chatroom"
-  name: String
-
-  "Username to be shown in braces `name(username)`"
-  username: String!
-
-  "Email of the user"
-  email: Email!
-
-  "The timestamp of a chatroom creation"
-  createdAt: DateTime!
+  "An optional string identifying the mutation call, which will be returned in the response payload"
+  clientMutationId: String
 }
 
 "Allows changing chatroom status to CLOSED or REOPENED by either user or support team employee"
 input UpdateChatroomStatusInput {
-  "The chatroom ID, which defaults to the chatroom opened by viewer"
-  chatroomId: ID
-
   "Status to be set"
   status: ChatroomStatus!
 
@@ -123,7 +72,7 @@ input UpdateChatroomStatusInput {
 "The response from the `createChatroom` mutation"
 type CreateChatroomPayload {
   "The started chatroom"
-  chatroom: Chatroom
+  openedChatroom: Chatroom!
 
   "The same string you sent with the mutation params, for matching mutation calls with their responses"
   clientMutationId: String
@@ -132,7 +81,7 @@ type CreateChatroomPayload {
 "The response from the `ChangeChatroomStatus` mutation"
 type UpdateChatroomStatusPayload {
   "The changed chatroom"
-  chatroom: Chatroom
+  updatedChatroom: Chatroom
 
   """
   Reason that explains status change (for support team employees).
@@ -184,13 +133,13 @@ extend type Mutation {
   createChatroom(
     "Mutation input"
     input: CreateChatroomInput!
-  ): CreateChatroomPayload
+  ): CreateChatroomPayload!
 
   "Update chatroom status"
   updateChatroom(
     "Mutation input"
     input: UpdateChatroomStatusInput!
-  ): UpdateChatroomStatusPayload  
+  ): UpdateChatroomStatusPayload!
 }
 
 extend type Query {
