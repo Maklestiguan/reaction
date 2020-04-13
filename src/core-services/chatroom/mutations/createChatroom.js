@@ -7,7 +7,7 @@ import { Chatroom as ChatroomSchema } from "../simpleSchemas.js";
  * @param {Object} input - mutation input
  * @returns {Promise<Object>} Created chatroom
  */
-export default async function createChatroom(context) {
+export default async function createChatroom(context, input) {
   const { _id } = input;
   const { appEvents, collections } = context;
   const { Chatrooms } = collections;
@@ -23,8 +23,6 @@ export default async function createChatroom(context) {
     createdAt,
     updatedAt: createdAt
   };
-
-  ChatroomSchema.validate(chatroom);
 
   await Chatrooms.insertOne(chatroom);
 

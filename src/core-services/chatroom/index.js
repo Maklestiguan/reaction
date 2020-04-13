@@ -1,5 +1,5 @@
 import mutations from "./mutations/index.js";
-import policies from "./policies.json";
+// import policies from "./policies.json";
 import queries from "./queries/index.js";
 import resolvers from "./resolvers/index.js";
 import schemas from "./schemas/index.js";
@@ -34,7 +34,7 @@ export default async function register(app) {
     },
     queries,
     mutations,
-    policies,
+    // policies,
     // functionsByType: {
       // createDataLoaders: [createDataLoaders]
     // },

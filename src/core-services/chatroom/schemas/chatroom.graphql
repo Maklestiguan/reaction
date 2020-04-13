@@ -11,7 +11,7 @@ enum ChatroomStatus {
 "Represents a single chatroom instance"
 type Chatroom implements Node {
   "The ID of the chatroom"
-  _id: ID
+  _id: ID!
 
   "Current status of the chatroom"
   status: ChatroomStatus!
@@ -46,9 +46,6 @@ type Message {
 
 "Defines the chatroom which should be created"
 input CreateChatroomInput {
-  "The ID of the user that started the chatroom"
-  createdBy: Account!
-
   "An optional string identifying the mutation call, which will be returned in the response payload"
   clientMutationId: String
 }
@@ -142,6 +139,21 @@ extend type Mutation {
   ): UpdateChatroomStatusPayload!
 }
 
+"The fields by which you are allowed to sort any query that returns a `Chatroom`"
+enum ChatroomSortByField {
+  "Chatroom ID"
+  _id
+
+  "Date and time at which the chatroom was created"
+  createdAt
+
+  "Chatroom status"
+  status
+
+  "Date and time at which the chatroom was last updated"
+  updatedAt
+}
+
 extend type Query {
   "Returns the chatroom with the provided ID"
   chatroom(
@@ -175,7 +187,4 @@ extend type Query {
     "By default, groups are sorted by when they were created, oldest first. Set this to sort by one of the other allowed fields"
     sortBy: ChatroomSortByField = createdAt
   ): ChatroomConnection!
-
-  "Returns the chatroom for the authenticated user"
-  viewer: Chatroom
 }

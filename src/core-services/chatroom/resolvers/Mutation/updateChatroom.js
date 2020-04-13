@@ -1,4 +1,4 @@
-import { decodeMediaRecordOpaqueId, decodeChatroomOpaqueId } from "../../xforms/id.js";
+import { encodeChatroomOpaqueId, decodeChatroomOpaqueId } from "../../xforms/id.js";
 
 
 export default async function updateChatroom(_, { input }, context) {

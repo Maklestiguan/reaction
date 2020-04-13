@@ -13,14 +13,14 @@ const chatroomUpdatesSchema = new SimpleSchema({
  * @returns {Promise<Object>} Updated chatroom
  */
 export default async function updateChatroom(context, input) {
-  const { _id } = input;
+  const { _id, status } = input;
   const { appEvents, collections } = context;
   const { Chatrooms } = collections;
 
   // await context.validatePermissions(`reaction:legacy:addressValidationRules:${_id}`, "update", { shopId });
 
   const updates = {
-    chatroomStatus: String,
+    chatroomStatus: status,
     updatedAt: new Date()
   };
 
@@ -29,7 +29,6 @@ export default async function updateChatroom(context, input) {
   const { value: updatedChatroom } = await Chatrooms.findOneAndUpdate(
     { _id },
     {
-      // Не понимаю, что делает эта строка
       $set: updates
     },
     {
@@ -37,7 +36,9 @@ export default async function updateChatroom(context, input) {
     }
   );
 
-  if (!updatedChatroom) throw new ReactionError("not-found", "Not found");
+  if (!updatedChatroom) {
+    throw new ReactionError("not-found", "Not found");
+  }
 
   await appEvents.emit("afterChatroomUpdate", updatedChatroom);
 

@@ -8,6 +8,10 @@ export const Chatroom = new SimpleSchema({
     type: Array,
     optional: true
   },
+  "messages.$": {
+    type: Object,
+    optional: true
+  },
   "createdAt": Date,
   "lastUpdatedAt": Date
 });
