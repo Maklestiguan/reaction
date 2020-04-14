@@ -13,5 +13,5 @@ export const Chatroom = new SimpleSchema({
     optional: true
   },
   "createdAt": Date,
-  "lastUpdatedAt": Date
+  "updatedAt": Date
 });

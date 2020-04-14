@@ -8,9 +8,9 @@ import { Chatroom as ChatroomSchema } from "../simpleSchemas.js";
  * @returns {Promise<Object>} Created chatroom
  */
 export default async function createChatroom(context, input) {
-  const { _id } = input;
-  const { appEvents, collections } = context;
-  const { Chatrooms } = collections;
+  // const { _id } = input;
+  const { collections } = context;
+  const { Chatrooms } = collections; // Нельзя сделать Chatrooms = context напрямую
 
   // await context.validatePermissions("reaction:legacy:", "create", { shopId });
 
@@ -18,15 +18,17 @@ export default async function createChatroom(context, input) {
   const chatroom = {
     _id: Random.id(),
     status: "OPENED",
-    createdBy: "Test",
+    createdBy: Random.id(), // viewer _id from input
     messages: [],
     createdAt,
     updatedAt: createdAt
   };
 
+  ChatroomSchema.validate(chatroom);
+
   await Chatrooms.insertOne(chatroom);
 
-  await appEvents.emit("afterChatroomCreate", chatroom);
+  // await appEvents.emit("afterChatroomCreate", chatroom);
 
   return chatroom;
 }

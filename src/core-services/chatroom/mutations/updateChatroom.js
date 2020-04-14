@@ -3,6 +3,7 @@ import SimpleSchema from "simpl-schema";
 
 const chatroomUpdatesSchema = new SimpleSchema({
   "status": String,
+  "reason" : String,
   "updatedAt": Date
 });
 
@@ -40,7 +41,7 @@ export default async function updateChatroom(context, input) {
     throw new ReactionError("not-found", "Not found");
   }
 
-  await appEvents.emit("afterChatroomUpdate", updatedChatroom);
+  // await appEvents.emit("afterChatroomUpdate", updatedChatroom);
 
   return updatedChatroom;
 }

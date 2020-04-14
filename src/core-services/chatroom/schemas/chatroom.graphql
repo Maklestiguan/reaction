@@ -26,7 +26,7 @@ type Chatroom implements Node {
   createdAt: DateTime!
 
   "Last chatroom status update time"
-  lastUpdatedAt: DateTime!
+  updatedAt: DateTime!
 }
 
 "Represents a single message instance"
@@ -69,7 +69,7 @@ input UpdateChatroomStatusInput {
 "The response from the `createChatroom` mutation"
 type CreateChatroomPayload {
   "The started chatroom"
-  openedChatroom: Chatroom!
+  chatroom: Chatroom!
 
   "The same string you sent with the mutation params, for matching mutation calls with their responses"
   clientMutationId: String
@@ -78,7 +78,7 @@ type CreateChatroomPayload {
 "The response from the `ChangeChatroomStatus` mutation"
 type UpdateChatroomStatusPayload {
   "The changed chatroom"
-  updatedChatroom: Chatroom
+  chatroom: Chatroom!
 
   """
   Reason that explains status change (for support team employees).
@@ -163,9 +163,6 @@ extend type Query {
 
   "Returns chatrooms optionally filtered by status"
   chatrooms(
-    "Return only chatrooms in any of these groups"
-    groupStatuses: [ChatroomStatus],
-
     "Return only results that come after this cursor. Use this with `first` to specify the number of results to return."
     after: ConnectionCursor,
 
