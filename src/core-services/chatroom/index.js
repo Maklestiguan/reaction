@@ -4,7 +4,7 @@ import queries from "./queries/index.js";
 import resolvers from "./resolvers/index.js";
 import schemas from "./schemas/index.js";
 // import createDataLoaders from "./utils/createDataLoaders.js";
-import { Chatroom } from "./simpleSchemas.js";
+import { Chatroom, Message } from "./simpleSchemas.js";
 
 /**
  * @summary Import and call this function to add this plugin to your API.
@@ -18,14 +18,10 @@ export default async function register(app) {
     version: app.context.appVersion,
     collections: {
       Chatrooms: {
-        name: "Chatrooms",
-        // indexes: [
-          // Create indexes. We set specific names for backwards compatibility
-          // with indexes created by the aldeed:schema-index Meteor package.
-          // [{ domains: 1 }, { name: "c2_domains" }],
-          // [{ name: 1 }, { name: "c2_name" }],
-          // [{ slug: 1 }, { name: "c2_slug", sparse: true, unique: true }]
-        // ]
+        name: "Chatrooms"
+      },
+      Messages: {
+        name: "Messages"
       }
     },
     graphQL: {
@@ -39,7 +35,8 @@ export default async function register(app) {
       // createDataLoaders: [createDataLoaders]
     // },
     simpleSchemas: {
-      Chatroom
+      Chatroom,
+      Message
     }
   });
 }

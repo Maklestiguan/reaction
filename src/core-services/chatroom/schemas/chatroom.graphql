@@ -29,21 +29,6 @@ type Chatroom implements Node {
   updatedAt: DateTime!
 }
 
-"Represents a single message instance"
-type Message {
-  "Message unique id"
-  id: ID!
-
-  "Text of the message"
-  text: String!
-  
-  "An author of the message"
-  createdBy: Account!
-
-  "Message creation time"
-  createdAt: DateTime!
-}
-
 "Defines the chatroom which should be created"
 input CreateChatroomInput {
   "An optional string identifying the mutation call, which will be returned in the response payload"
@@ -52,6 +37,9 @@ input CreateChatroomInput {
 
 "Allows changing chatroom status to CLOSED or REOPENED by either user or support team employee"
 input UpdateChatroomStatusInput {
+  "Chatroom to update"
+  chatroom: ID!
+
   "Status to be set"
   status: ChatroomStatus!
 
@@ -181,7 +169,7 @@ extend type Query {
     "Return results sorted in this order"
     sortOrder: SortOrder = asc,
 
-    "By default, groups are sorted by when they were created, oldest first. Set this to sort by one of the other allowed fields"
+    "By default, chatrooms are sorted by when they were created, oldest first. Set this to sort by one of the other allowed fields"
     sortBy: ChatroomSortByField = createdAt
   ): ChatroomConnection!
 }

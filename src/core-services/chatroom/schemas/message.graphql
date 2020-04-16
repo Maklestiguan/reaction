@@ -1,0 +1,121 @@
+"Represents a single message instance"
+type Message implements Node {
+  "Message unique id"
+  _id: ID!
+
+  "The chatroom that owns the message"
+  chatroomId: ID!
+
+  "Text of the message"
+  text: String!
+  
+  "An author of the message"
+  createdBy: Account!
+
+  "Message creation time"
+  createdAt: DateTime!
+}
+
+"Defines the message which should be sent"
+input CreateMessageInput {
+  "The text of the message"
+  text: String!
+
+  "An optional string identifying the mutation call, which will be returned in the response payload"
+  clientMutationId: String
+}
+
+"The response from the `createMessage` mutation"
+type CreateMessagePayload {
+  "The started message"
+  message: Message!
+
+  "The same string you sent with the mutation params, for matching mutation calls with their responses"
+  clientMutationId: String
+}
+
+"""
+Wraps a list of `Messages`, providing pagination cursors and information.
+
+For information about what Relay-compatible connections are and how to use them, see the following articles:
+- [Relay Connection Documentation](https://facebook.github.io/relay/docs/en/graphql-server-specification.html#connections)
+- [Relay Connection Specification](https://facebook.github.io/relay/graphql/connections.htm)
+- [Using Relay-style Connections With Apollo Client](https://www.apollographql.com/docs/react/recipes/pagination.html)
+"""
+type MessageConnection {
+  "The list of nodes that match the query, wrapped in an edge to provide a cursor string for each"
+  edges: [MessageEdge]
+
+  """
+  You can request the `nodes` directly to avoid the extra wrapping that `NodeEdge` has,
+  if you know you will not need to paginate the results.
+  """
+  nodes: [Message]
+
+  "Information to help a client request the next or previous page"
+  pageInfo: PageInfo!
+
+  "The total number of nodes that match your query"
+  totalCount: Int!
+}
+
+"A connection edge in which each node is a `Message` object"
+type MessageEdge implements NodeEdge {
+  "The cursor that represents this node in the paginated results"
+  cursor: ConnectionCursor!
+
+  "The message"
+  node: Message
+}
+
+extend type Mutation {
+  "Create a message"
+  createMessage(
+    "Mutation input"
+    input: CreateMessageInput!
+  ): CreateMessagePayload!
+}
+
+"The fields by which you are allowed to sort any query that returns a `Message`"
+enum MessageSortByField {
+  "Message ID"
+  _id
+
+  "Date and time at which the message was sent"
+  createdAt
+
+  "An user that sent the message"
+  createdBy
+}
+
+extend type Query {
+  "Returns the message with the provided ID"
+  message(
+    "The message ID"
+    id: ID!
+  ): Message
+
+  "Returns messages optionally filtered by param"
+  messages(
+    "Return only results that come after this cursor. Use this with `first` to specify the number of results to return."
+    after: ConnectionCursor,
+
+    "Return only results that come before this cursor. Use this with `last` to specify the number of results to return."
+    before: ConnectionCursor,
+
+    "Return at most this many results. This parameter may be used with either `after` or `offset` parameters."
+    first: ConnectionLimitInt,
+
+    "Return at most this many results. This parameter may be used with the `before` parameter."
+    last: ConnectionLimitInt,
+
+    "Return only results that come after the Nth result. This parameter may be used with the `first` parameter."
+    offset: Int,
+
+    "Return results sorted in this order"
+    sortOrder: SortOrder = asc,
+
+    "By default, messages are sorted by when they were sent, oldest first. Set this to sort by one of the other allowed fields"
+    sortBy: MessageSortByField = createdAt
+  ): MessageConnection!
+}

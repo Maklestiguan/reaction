@@ -1,5 +1,14 @@
 import SimpleSchema from "simpl-schema";
 
+
+export const Message = new SimpleSchema({
+  "_id": String,
+  "text": String,
+  "createdBy": String,
+  "createdAt": Date,
+  "chatroomId": String
+});
+
 export const Chatroom = new SimpleSchema({
   "_id": String,
   "status": String,
@@ -9,8 +18,7 @@ export const Chatroom = new SimpleSchema({
     optional: true
   },
   "messages.$": {
-    type: Object,
-    optional: true
+    type: Message
   },
   "createdAt": Date,
   "updatedAt": Date
