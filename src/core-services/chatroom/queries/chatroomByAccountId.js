@@ -1,16 +1,14 @@
 import ReactionError from "@reactioncommerce/reaction-error";
 
-export default async function chatroomQuery(context, id) {
+export default async function chatroomByAccountId(context, { createdBy } = {}) {
   const { collections } = context;
   const { Chatrooms } = collections;
 
-  const chatroom = await Chatrooms.findOne({ createdBy: id });
-  if (!chatroom) throw new ReactionError("not-found", "No account found");
-
-  // Check to make sure current user has permissions to view queried user
-  // await context.validatePermissions("reaction:legacy:accounts", "read", {
-  //   owner: account.userId
-  // });
+  console.log(createdBy);
+  const chatroom = await Chatrooms.findOne({ createdBy });
+  if (!chatroom) {
+    throw new ReactionError("not-found", "No chatroom found");
+  }
 
   return chatroom;
 }

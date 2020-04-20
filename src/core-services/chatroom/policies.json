@@ -1,0 +1,55 @@
+[
+  {
+    "description": "Account managers acting on all entities.",
+    "subjects": [ "reaction:groups:account-managers" ],
+    "resources": [ "reaction:chatrooms" ],
+    "actions": [
+      "read",
+      "update"
+    ],
+    "effect": "allow"
+  },
+  {
+    "description": "Chatroom owner acting on their chatroom.",
+    "subjects": [ "reaction:users:*" ],
+    "resources": [ "reaction:chatrooms:*" ],
+    "actions": [
+      "create",
+      "read",
+      "update"
+    ],
+    "effect": "allow",
+    "conditions": {
+      "owner": {
+        "type": "EqualsSubjectCondition",
+        "options": {}
+      }
+    }
+  },
+  {
+    "description": "Account managers acting on all entities.",
+    "subjects": [ "reaction:groups:account-managers" ],
+    "resources": [ "reaction:messages" ],
+    "actions": [
+      "create",
+      "read"
+    ],
+    "effect": "allow"
+  },
+  {
+    "description": "Chatroom owner acting on their in-chat messages.",
+    "subjects": [ "reaction:users:*" ],
+    "resources": [ "reaction:messages:*" ],
+    "actions": [
+      "create",
+      "read"
+    ],
+    "effect": "allow",
+    "conditions": {
+      "owner": {
+        "type": "EqualsSubjectCondition",
+        "options": {}
+      }
+    }
+  }
+]

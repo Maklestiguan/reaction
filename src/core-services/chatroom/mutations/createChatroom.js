@@ -1,4 +1,5 @@
 import Random from "@reactioncommerce/random";
+import ReactionError from "@reactioncommerce/reaction-error";
 import { Chatroom as ChatroomSchema } from "../simpleSchemas.js";
 
 /**
@@ -7,18 +8,29 @@ import { Chatroom as ChatroomSchema } from "../simpleSchemas.js";
  * @param {Object} input - mutation input
  * @returns {Promise<Object>} Created chatroom
  */
-export default async function createChatroom(context, input) {
-  // const { _id } = input;
-  const { collections } = context;
-  const { Chatrooms } = collections; // Нельзя сделать Chatrooms = context напрямую
+export default async function createChatroom(context) {
+  const { collections, userId } = context;
+  const { Chatrooms, Accounts } = collections;
 
-  // await context.validatePermissions("reaction:legacy:", "create", { shopId });
+  const account = await Accounts.findOne({ _id: userId }, { projection: { userId: 1 } });
+  await context.validatePermissions("reaction:chatrooms", "create", {
+    owner: account.userId
+  });
+
+  // If we have an accountId and that account already has a chatroom - throw error
+  if (userId) {
+    const existingChatroom = await Chatrooms.findOne({ createdBy: userId }, { projection: { _id: 1 } });
+
+    if (existingChatroom) {
+      throw new ReactionError("chatroom-found", "Each account may have only one chatroom.");
+    }
+  }
 
   const createdAt = new Date();
   const chatroom = {
     _id: Random.id(),
     status: "OPENED",
-    createdBy: Random.id(), // viewer _id from input
+    createdBy: userId,
     messages: [],
     createdAt,
     updatedAt: createdAt

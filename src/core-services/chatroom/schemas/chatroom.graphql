@@ -149,6 +149,12 @@ extend type Query {
     id: ID!
   ): Chatroom
 
+  "Find a chatroom for a given account ID."
+  chatroomByAccountId(
+    "Account that owns the cart"
+    createdBy: ID!
+  ): Chatroom
+
   "Returns chatrooms optionally filtered by status"
   chatrooms(
     "Return only results that come after this cursor. Use this with `first` to specify the number of results to return."

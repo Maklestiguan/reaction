@@ -8,7 +8,7 @@ type Message implements Node {
 
   "Text of the message"
   text: String!
-  
+
   "An author of the message"
   createdBy: Account!
 

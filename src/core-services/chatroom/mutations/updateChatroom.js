@@ -15,10 +15,13 @@ const chatroomUpdatesSchema = new SimpleSchema({
  */
 export default async function updateChatroom(context, input) {
   const { chatroom, status, reason } = input;
-  const { collections } = context;
-  const { Chatrooms } = collections;
+  const { collections, userId } = context;
+  const { Chatrooms, Accounts } = collections;
 
-  // await context.validatePermissions(`reaction:legacy:addressValidationRules:${_id}`, "update", { shopId });
+  const account = await Accounts.findOne({ _id: userId }, { projection: { userId: 1 } });
+  await context.validatePermissions(`reaction:chatrooms:${chatroom}`, "update", {
+    owner: account.userId
+  });
 
   const updates = {
     status,
@@ -27,8 +30,6 @@ export default async function updateChatroom(context, input) {
   };
 
   chatroomUpdatesSchema.validate(updates);
-
-  console.log(chatroom);
 
   const { value: updatedChatroom } = await Chatrooms.findOneAndUpdate(
     { _id: chatroom },
