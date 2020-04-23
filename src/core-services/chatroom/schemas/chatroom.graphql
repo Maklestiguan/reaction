@@ -38,7 +38,7 @@ input CreateChatroomInput {
 "Allows changing chatroom status to CLOSED or REOPENED by either user or support team employee"
 input UpdateChatroomStatusInput {
   "Chatroom to update"
-  chatroom: ID!
+  chatroomId: ID!
 
   "Status to be set"
   status: ChatroomStatus!

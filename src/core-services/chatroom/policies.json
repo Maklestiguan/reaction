@@ -16,7 +16,8 @@
     "actions": [
       "create",
       "read",
-      "update"
+      "update",
+      "create:messages"
     ],
     "effect": "allow",
     "conditions": {

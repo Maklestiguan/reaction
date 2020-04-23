@@ -14,14 +14,21 @@ const chatroomUpdatesSchema = new SimpleSchema({
  * @returns {Promise<Object>} Updated chatroom
  */
 export default async function updateChatroom(context, input) {
-  const { chatroom, status, reason } = input;
+  const { chatroomId, status, reason } = input;
   const { collections, userId } = context;
-  const { Chatrooms, Accounts } = collections;
+  const { Groups, Chatrooms, Accounts } = collections;
 
-  const account = await Accounts.findOne({ _id: userId }, { projection: { userId: 1 } });
-  await context.validatePermissions(`reaction:chatrooms:${chatroom}`, "update", {
-    owner: account.userId
-  });
+  const account = await Accounts.findOne({ _id: userId });
+  const chatroom = await Chatrooms.findOne({ _id: chatroomId })
+  const accountManagerGroup = await Groups.findOne({ name: "accounts manager"});
+
+  // await context.validatePermissions(`reaction:chatrooms:${chatroom}`, "update", {
+  //   owner: account.userId
+  // });
+
+  if(chatroom.createdBy !== userId && !account.groups.includes(accountManagerGroup._id)) {
+    throw new ReactionError("permission-error", "You have no permission to perform this action");
+  }
 
   const updates = {
     status,
@@ -32,7 +39,7 @@ export default async function updateChatroom(context, input) {
   chatroomUpdatesSchema.validate(updates);
 
   const { value: updatedChatroom } = await Chatrooms.findOneAndUpdate(
-    { _id: chatroom },
+    { _id: chatroom._id },
     {
       $set: updates
     },

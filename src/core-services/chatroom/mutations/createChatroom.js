@@ -19,7 +19,7 @@ export default async function createChatroom(context) {
 
   // If we have an accountId and that account already has a chatroom - throw error
   if (userId) {
-    const existingChatroom = await Chatrooms.findOne({ createdBy: userId }, { projection: { _id: 1 } });
+    const existingChatroom = await Chatrooms.count({ createdBy: userId }, { projection: { _id: 1 } });
 
     if (existingChatroom) {
       throw new ReactionError("chatroom-found", "Each account may have only one chatroom.");

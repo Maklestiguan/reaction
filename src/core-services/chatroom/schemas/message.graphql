@@ -18,6 +18,9 @@ type Message implements Node {
 
 "Defines the message which should be sent"
 input CreateMessageInput {
+  "Optional chatroom ID to send message to"
+  chatroomId: ID
+
   "The text of the message"
   text: String!
 
@@ -27,7 +30,7 @@ input CreateMessageInput {
 
 "The response from the `createMessage` mutation"
 type CreateMessagePayload {
-  "The started message"
+  "The message sent"
   message: Message!
 
   "The same string you sent with the mutation params, for matching mutation calls with their responses"
