@@ -1,0 +1,13 @@
+mutation {
+  createChatroom(input: {}) {
+    chatroom {
+      _id
+      status
+      messages {
+        text
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}
