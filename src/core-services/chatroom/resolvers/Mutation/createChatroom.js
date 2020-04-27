@@ -1,7 +1,6 @@
-export default async function createChatroom(_, { input }, context) {
-  const { clientMutationId = null, ...mutationInput } = input;
+export default async function createChatroom(_, context) {
   
-  const chatroom = await context.mutations.createChatroom(context, { ...mutationInput });
+  const chatroom = await context.mutations.createChatroom(context);
   
-  return { chatroom, clientMutationId };
+  return { chatroom };
 }
