@@ -1,9 +1,9 @@
 import createChatroom from "./createChatroom.js";
-import updateChatroom from "./updateChatroom.js";
+import updateChatroomStatus from "./updateChatroomStatus.js";
 import createMessage from "./createMessage.js";
 
 export default {
   createChatroom,
-  updateChatroom,
+  updateChatroomStatus,
   createMessage
 };

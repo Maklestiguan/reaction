@@ -1,0 +1,11 @@
+mutation($input: UpdateChatroomStatusInput!) {
+  updateChatroomStatus(input: $input) {
+    chatroom {
+      _id
+      status
+      messages {
+        text
+      }
+    }
+  }
+}
