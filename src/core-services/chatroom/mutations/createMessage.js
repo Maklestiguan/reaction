@@ -11,13 +11,12 @@ import { Message as MessageSchema } from "../simpleSchemas.js";
  */
 export default async function createMessage(context, input) {
   const { text, chatroomId } = input;
-  const { collections, userId } = context;
+  const { collections, accountId } = context;
   const { Groups, Chatrooms, Accounts } = collections;
 
-  const account = await Accounts.findOne({ _id: userId });
-  const accountManagerGroup = await Groups.findOne({ name: "accounts manager"});
-  const chatroom = await Chatrooms.findOne({ _id: chatroomId })
-    || await Chatrooms.findOne({ createdBy: userId });
+  const account = await Accounts.findOne({ _id: accountId }, { projection: { accountId: 1, groups: 1 } });
+  const accountManagerGroup = await Groups.findOne({ name: "accounts manager"}, { projection: { _id: 1 } });
+  const chatroom = await Chatrooms.findOne({ _id: chatroomId }) || await Chatrooms.findOne({ createdBy: accountId });
 
   // await context.validatePermissions(`reaction:chatrooms:${chatroom._id})`, "create:messages", {
   //   owner: account._id,
@@ -27,7 +26,7 @@ export default async function createMessage(context, input) {
     throw new ReactionError("chatroom-not-found", "Click on chat widget to start a chat");
   }
 
-  if(chatroom.createdBy !== userId && !account.groups.includes(accountManagerGroup._id)) {
+  if(chatroom.createdBy !== accountId && !account.groups.includes(accountManagerGroup._id)) {
     throw new ReactionError("permission-error", "You have no permission to perform this action");
   }
 
@@ -35,7 +34,7 @@ export default async function createMessage(context, input) {
   const message = {
     _id: Random.id(),
     text: text,
-    createdBy: userId,
+    createdBy: accountId,
     createdAt,
     chatroomId: chatroom._id
   };

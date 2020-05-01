@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should throw if user tries to send message to chatroom using id of another user's chatroom 1`] = `
+Object {
+  "extensions": Object {
+    "code": "INTERNAL_SERVER_ERROR",
+    "exception": Object {
+      "details": Object {},
+      "error": "permission-error",
+      "eventData": Object {},
+      "isClientSafe": true,
+      "reason": "You have no permission to perform this action",
+    },
+  },
+  "locations": Array [
+    Object {
+      "column": 3,
+      "line": 2,
+    },
+  ],
+  "message": "You have no permission to perform this action",
+  "path": Array [
+    "createMessage",
+  ],
+}
+`;

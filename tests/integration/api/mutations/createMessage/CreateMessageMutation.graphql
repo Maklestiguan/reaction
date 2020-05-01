@@ -1,0 +1,8 @@
+mutation($input: CreateMessageInput!) {
+  createMessage(input: $input) {
+    message {
+      text
+      chatroomId
+    }
+  }
+}
