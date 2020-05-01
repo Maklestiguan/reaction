@@ -18,7 +18,10 @@ type Message implements Node {
 
 "Defines the message which should be sent"
 input CreateMessageInput {
-  "Optional chatroom ID to send message to"
+  """
+  Optional chatroom ID to send message to
+  NOTE: Should be used only by admins with appropriate permissions
+  """
   chatroomId: ID
 
   "The text of the message"

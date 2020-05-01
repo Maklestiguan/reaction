@@ -38,12 +38,16 @@ input CreateChatroomInput {
 "Allows changing chatroom status to CLOSED or REOPENED by either user or support team employee"
 input UpdateChatroomStatusInput {
   "Chatroom to update"
-  chatroomId: ID!
+  chatroomId: ID
 
   "Status to be set"
   status: ChatroomStatus!
 
   """
+  На данный момент не предусмотрен функционал хранения причин смены статуса чата.
+  Пока механизм работы с причинами смены статуса не будет выработан,
+  данное свойство использоваться не будет.
+
   Reason that explains status change (for support team employees).
   NOTE:
     You can also implement additional functionality for users to set reason too.
@@ -121,7 +125,7 @@ extend type Mutation {
   ): CreateChatroomPayload!
 
   "Update chatroom status"
-  updateChatroom(
+  updateChatroomStatus(
     "Mutation input"
     input: UpdateChatroomStatusInput!
   ): UpdateChatroomStatusPayload!
